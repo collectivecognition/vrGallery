@@ -8,6 +8,10 @@ from direct.task import Task
 from direct.interval.IntervalGlobal import *
 from panda3d.core import *
 
+# Load our custom, app-specific config file
+from pandac.PandaModules import loadPrcFile
+loadPrcFile("./etc/Config.prc")
+
 # TODO: Rewrite controls code
 class Controls(DirectObject):
 	def __init__(self):
@@ -184,6 +188,9 @@ class VRGallery(ShowBase):
 		wood = loader.loadTexture("wood.jpg")
 		floor.setTexture(wood)
 		floor.setTexScale(TextureStage.getDefault(), 10.0, 10.0) # FIXME: Should be dynamic
+				
+		# Turn on antialiasing
+		render.setAntialias(AntialiasAttrib.MAuto)
 				
 		# Initialize controls		
 		controls = Controls()
