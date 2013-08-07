@@ -1,4 +1,6 @@
 # TODO: Suppress Panda3d console output
+# TODO: Genericize card rendering
+# TODO: Handle not enough images
 
 import glob, math, os, random, sys
 
@@ -184,9 +186,21 @@ class VRGallery(ShowBase):
 		floor.reparentTo(render)
 		floor.setPos(0, 0, -WALLHEIGHT / 2)
 		floor.setHpr(0, 270, 0)
-		wood = loader.loadTexture("assets/wood.jpg")
-		floor.setTexture(wood)
+		floorTexture = loader.loadTexture("assets/floor.png")
+		floor.setTexture(floorTexture)
 		floor.setTexScale(TextureStage.getDefault(), 10.0, 10.0) # FIXME: Should be dynamic
+				
+		# Render ceiling
+		# FIXME: Should support odd room shapes
+		cm = CardMaker("ceiling")
+		cm.setFrame(-(wallLength / 2.0) - fudge, wallLength / 2.0 + fudge, -(wallLength / 2.0) - fudge, wallLength / 2.0 + fudge)
+		ceiling = NodePath(cm.generate())
+		ceiling.reparentTo(render)
+		ceiling.setPos(0, 0, WALLHEIGHT)
+		ceiling.setHpr(0, 90, 0)
+		ceilingTexture = loader.loadTexture("assets/ceiling.png")
+		ceiling.setTexture(ceilingTexture)
+		ceiling.setTexScale(TextureStage.getDefault(), 5.0, 5.0) # FIXME: Should be dynamic
 				
 		# Turn on antialiasing
 		render.setAntialias(AntialiasAttrib.MAuto)
