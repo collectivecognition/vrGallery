@@ -70,9 +70,9 @@ class Controls(DirectObject):
 NUMWALLS			= 4
 PLAYERHEIGHT 		= 4.0
 MINCARDHEIGHT 		= 2.0
-MAXCARDHEIGHT 		= 7.0
+MAXCARDHEIGHT 		= 8.0
 CARDCENTERHEIGHT 	= 4.0
-MINCARDPADDING 		= 0.5
+MINCARDPADDING 		= 1.5
 WALLHEIGHT			= 10.0
 
 class VRGallery(ShowBase):
@@ -121,17 +121,16 @@ class VRGallery(ShowBase):
 		for i in images:
 			smallest = totals.index(min(totals))
 			walls[smallest].append(i)
-			totals[smallest] += i["width"] + MINCARDPADDING
-		
+			totals[smallest] += i["width"]
+			
 		# Render images
 		wallLength = max([total + MINCARDPADDING * len(walls[t]) for t, total in enumerate(totals)])
 		imageGroupNodes = [None] * NUMWALLS
+		print wallLength
 		
 		for indexW, w in enumerate(walls):
 			imageGroupNodes[indexW] = render.attachNewNode(PandaNode("%i wall" % (indexW)))
-			imageGroupNodes[indexW].setPos(0, 0, 0)
-			
-			padding = wallLength - totals[indexW]
+			padding = (wallLength - totals[indexW]) / len(w)
 			offset = padding / 2.0 # Set initial offset
 			
 			for indexI, i in enumerate(w):
@@ -161,7 +160,7 @@ class VRGallery(ShowBase):
 		
 		for index, w in enumerate(walls):
 			cm = CardMaker("%i wall" % (index))
-			cm.setFrame(-wallLength / 2 - fudge, wallLength + fudge * 2, -WALLHEIGHT / 2, WALLHEIGHT)
+			cm.setFrame(0, wallLength + fudge * 2, -WALLHEIGHT / 2, WALLHEIGHT)
 			card = NodePath(cm.generate())
 			card.reparentTo(render)
 			wallNodes.append(card)
@@ -180,12 +179,12 @@ class VRGallery(ShowBase):
 		# Render floor
 		# FIXME: Should support odd room shapes
 		cm = CardMaker("floor")
-		cm.setFrame(-wallLength / 2 - fudge, wallLength + fudge * 2, -wallLength / 2 - fudge, wallLength + fudge * 2)
+		cm.setFrame(-(wallLength / 2.0) - fudge, wallLength / 2.0 + fudge, -(wallLength / 2.0) - fudge, wallLength / 2.0 + fudge)
 		floor = NodePath(cm.generate())
 		floor.reparentTo(render)
-		floor.setZ(-WALLHEIGHT / 2)
+		floor.setPos(0, 0, -WALLHEIGHT / 2)
 		floor.setHpr(0, 270, 0)
-		wood = loader.loadTexture("wood.jpg")
+		wood = loader.loadTexture("assets/wood.jpg")
 		floor.setTexture(wood)
 		floor.setTexScale(TextureStage.getDefault(), 10.0, 10.0) # FIXME: Should be dynamic
 				
